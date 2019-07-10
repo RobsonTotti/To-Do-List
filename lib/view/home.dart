@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lista_de_compras/model/constants.dart';
+import 'package:lista_de_compras/controller/home_controller.dart';
 
 final Firestore db = Firestore();
 
@@ -81,40 +82,6 @@ class _HomeState extends State<Home> {
         });
   }
 
-  void alterarItem(document, reference) {
-    var alert = SimpleDialog(
-      backgroundColor: Colors.black12,
-      title: const Text(
-        'O que deseja fazer?',
-        style: TextStyle(color: Colors.white, fontSize: 30.0),
-      ),
-      children: <Widget>[
-        SimpleDialogOption(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text(
-            'Atualizar',
-            style: TextStyle(color: Colors.white, fontSize: 25.0),
-          ),
-        ),
-        SimpleDialogOption(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text(
-            'deletar',
-            style: TextStyle(color: Colors.white, fontSize: 25.0),
-          ),
-        ),
-      ],
-    );
-    showDialog(
-        context: context,
-        builder: (_) {
-          return alert;
-        });
-  }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     bool _comprado = document['comprado'];
@@ -152,91 +119,8 @@ class _HomeState extends State<Home> {
         }
       },
       onLongPress: () {
-        //alterarItem();
-        var alert = SimpleDialog(
-          backgroundColor: Colors.black12,
-          title: const Text(
-            'O que deseja fazer?',
-            style: TextStyle(color: Colors.white, fontSize: 30.0),
-          ),
-          children: <Widget>[
-            SimpleDialogOption(
-              onPressed: () {
-                var alert = AlertDialog(
-                  backgroundColor: Colors.black12,
-                  content: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: TextField(
-                          controller: controlUpdtItem,
-                          autofocus: true,
-                          decoration: InputDecoration(
-                              labelText: 'Item',
-                              //fillColor: Colors.white,
-                              //filled: true,
-                              //hintText: 'item',
-                              icon: Icon(Icons.title)),
-                          style: new TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                  actions: <Widget>[
-                    FlatButton(
-                      onPressed: () {
-                        if (controlItem.text.isNotEmpty) {
-                          String item = controlItem.text;
-                          document.reference.updateData({"item": item});
-
-//                          Firestore.instance
-//                              .collection('listas')
-//                              .add({'item': item, 'comprado': false});
-                          controlItem.clear();
-                        }
-                        Navigator.pop(context);
-                      },
-                      child: Text("Atualizar"),
-                    ),
-                    FlatButton(
-                      onPressed: () {
-                        controlItem.clear();
-                        Navigator.pop(context);
-                      },
-                      child: Text("Cancelar"),
-                    )
-                  ],
-                );
-                showDialog(
-                    context: context,
-                    builder: (_) {
-                      return alert;
-                    });
-
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'Atualizar',
-                style: TextStyle(color: Colors.white, fontSize: 25.0),
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                document.reference.delete();
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'deletar',
-                style: TextStyle(color: Colors.white, fontSize: 25.0),
-              ),
-            ),
-          ],
-        );
-        showDialog(
-            context: context,
-            builder: (_) {
-              return alert;
-            });
-      },
+        onLongPressLista(document, context);
+      }
     );
   }
 
@@ -278,19 +162,8 @@ class _HomeState extends State<Home> {
         onPressed: adicionarItem,
         tooltip: 'Adicionar Item',
         child: Icon(Icons.add),
-      ),
+    ),
     );
   }
 }
 
-void choiceAction(String choice) {
-  if (choice == Constants.removerTudo) {
-    //deletar tudo
-    var results = db.collection('listas');
-    results.getDocuments().then((query){
-      query.documents.forEach((doc){
-        doc.reference.delete();
-      });
-    });
-  }
-}
