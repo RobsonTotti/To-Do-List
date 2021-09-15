@@ -6,4 +6,4 @@ Projeto criado usando Dart e Flutter, onde o usuário pode adicionar e remover i
 
 ## Demonstração
 
-<img src="https://raw.githubusercontent.com/RobsonTotti/ReadmeImages/main/to-do-list.gif?raw=true"/>
+<img src="https://i.imgur.com/jtb9w4g.gif"/>
